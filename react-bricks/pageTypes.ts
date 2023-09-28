@@ -57,20 +57,24 @@ const pageTypes: types.IPageType[] = [
       {
         name: 'categoryId',
         label: 'Category ID',
+
         type: types.SideEditPropType.Select,
         selectOptions: {
           display: types.OptionsDisplay.Select,
-          options: [
-            { value: '', label: '-- Select category --' },
-            {
-              value: '1',
-              label: 'Family bikes',
-            },
-            {
-              value: '2',
-              label: 'Sport bikes',
-            },
-          ],
+          getOptions: async () => {
+            const bikeCategories = await fetchPages(config.apiKey, {
+              type: 'bikeCategory',
+            }).then((pages) =>
+              pages.map((page) => ({
+                value: page.customValues.categoryId,
+                label: page.name,
+              }))
+            )
+            return [
+              { value: '', label: '-- Select a category --' },
+              ...bikeCategories,
+            ]
+          },
         },
       },
     ],
@@ -96,21 +100,7 @@ const pageTypes: types.IPageType[] = [
       {
         name: 'categoryId',
         label: 'Category ID',
-        type: types.SideEditPropType.Select,
-        selectOptions: {
-          display: types.OptionsDisplay.Select,
-          options: [
-            { value: '', label: '-- Select category --' },
-            {
-              value: '1',
-              label: 'Family bikes',
-            },
-            {
-              value: '2',
-              label: 'Sport bikes',
-            },
-          ],
-        },
+        type: types.SideEditPropType.Text,
       },
     ],
     getExternalData: (page) =>
@@ -121,6 +111,7 @@ const pageTypes: types.IPageType[] = [
         },
       }),
   },
+  { name: 'dealerHero', pluralName: 'dealerHeros', isEntity: true },
 ]
 
 export default pageTypes
